@@ -2,7 +2,9 @@ import { useState } from "react";
 
 function App() {
     const [pkList, setPkList] = useState([]);
-
+    function hadlleClearList(){
+        setPkList([])
+    }
     function handleAddlist(newItem) {
         setPkList([...pkList, newItem]);
     }
@@ -22,8 +24,9 @@ function App() {
                 pkList={pkList}
                 onDelelteItems={handleDelelteItems}
                 handlePacked={handlePacked}
+                hadlleClearList={hadlleClearList}
             />
-            <Stats items={pkList}/>
+            <Stats items={pkList} />
         </div>
     );
 }
@@ -68,20 +71,49 @@ function Form({ onAddItems, packed }) {
     );
 }
 
-function PackingList({ pkList, onDelelteItems, handlePacked }) {
+function PackingList({ pkList, onDelelteItems, handlePacked ,hadlleClearList}) {
+    const [sortBy, setSortBy] = useState("input");
+    let sorted;
+
+    if (sortBy === "input") sorted = pkList;
+    else if (sortBy === "des")
+        sorted = pkList.slice().sort((a, b) => {
+            const _a = a.description.toUpperCase();
+            const _b = b.description.toUpperCase();
+            if (_a < _b) return -1;
+            if (_a > _b) return 1;
+            return 0;
+        });
+    else if (sortBy === "packed") sorted = pkList.slice().sort((a, b) => b.packed - a.packed);
+    console.log(sorted);
+    function sortHandler(e) {
+        setSortBy(e.target.value);
+        console.log(sortBy);
+    }
+    function clearHandler(){
+        hadlleClearList()
+    }
     return (
         <div className="list">
             <ul>
-                {pkList.map((item) => (
+                {sorted.map((item) => (
                     <Item
                         item={item}
                         key={item.id}
-                        items={pkList}
+                        items={sorted}
                         onDelelteItems={onDelelteItems}
                         handlePacked={handlePacked}
                     />
                 ))}
             </ul>
+            <div className="actions">
+                <select value={sortBy} id="" onChange={(e) => sortHandler(e)}>
+                    <option value="input">Sort by input order</option>
+                    <option value="des">Sort by deccription</option>
+                    <option value="packed">Sort by packed status</option>
+                </select>
+               <button onClick={clearHandler}>clear list</button>
+            </div>
         </div>
     );
 }
@@ -90,7 +122,6 @@ function Item({ item, onDelelteItems, handlePacked }) {
         onDelelteItems(id);
     }
     function checkedHandler(id) {
-        console.log(id);
         handlePacked(id);
     }
 
@@ -110,7 +141,7 @@ function Item({ item, onDelelteItems, handlePacked }) {
         </li>
     );
 }
-function Stats({items}) {
+function Stats({ items }) {
     return (
         <footer
             className="stats 
