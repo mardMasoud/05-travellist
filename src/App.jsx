@@ -90,9 +90,7 @@ function PackingList({ pkList, onDelelteItems, handlePacked ,hadlleClearList}) {
         setSortBy(e.target.value);
         console.log(sortBy);
     }
-    function clearHandler(){
-        hadlleClearList()
-    }
+   
     return (
         <div className="list">
             <ul>
@@ -112,7 +110,7 @@ function PackingList({ pkList, onDelelteItems, handlePacked ,hadlleClearList}) {
                     <option value="des">Sort by deccription</option>
                     <option value="packed">Sort by packed status</option>
                 </select>
-               <button onClick={clearHandler}>clear list</button>
+               <button onClick={hadlleClearList}>clear list</button>
             </div>
         </div>
     );
